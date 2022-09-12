@@ -80,9 +80,21 @@ function oss_file_upload($object, $file, $no_local_file = false)
         return false;
     }
     $bucket = oss_get_bucket_name();
+    $object = ltrim($object, "/");
     $ossClient = oss_get_client();
+
+    $fromBucket = $bucket;
+    $fromObject = $object;
+    $toBucket = $bucket;
+    $toObject = $object;
+    $copyOptions = array(
+        OssClient::OSS_HEADERS => array(
+            'Cache-Control' => 'max-age=31536000',
+        ),
+    );
     try{
-        $ossClient->uploadFile($bucket, ltrim($object, "/"), $file);
+        $ossClient->uploadFile($bucket, $object, $file);
+        $ossClient->copyObject($fromBucket, $fromObject, $toBucket, $toObject, $copyOptions);
     } catch (OssException $e) {
         if (WP_DEBUG) {
             echo 'Error Message: ', $e->getMessage(), PHP_EOL, 'Error Code: ', $e->getCode();
