@@ -90,6 +90,7 @@ function oss_file_upload($object, $file, $no_local_file = false)
     $copyOptions = array(
         OssClient::OSS_HEADERS => array(
             'Cache-Control' => 'max-age=31536000',
+            'x-oss-metadata-directive' => 'COPY',
         ),
     );
     try{
